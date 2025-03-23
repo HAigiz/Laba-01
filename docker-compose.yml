@@ -1,0 +1,28 @@
+services:
+  app1:
+    build: ./app
+    container_name: app1
+    ports:
+      - "6081:6080"
+
+  app2:
+    build: ./app
+    container_name: app2
+    ports:
+      - "6082:6080"
+
+  app3:
+    build: ./app
+    container_name: app3
+    ports:
+      - "6083:6080"
+
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - app1
+      - app2
+      - app3
