@@ -38,10 +38,7 @@ curl http://localhost/api/v1/contact/
 project/
 ├── app/
 │   ├── main.py
-│   ├── templates/
 │   ├── requirements.txt
-│   ├── requests(contacts).py
-│   ├── requests(groups).py
 │   └── Dockerfile
 ├── nginx/
 │   ├── nginx.conf
