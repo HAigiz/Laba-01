@@ -24,7 +24,7 @@ class Contact:
         self.username = username
         self.givenname = givenname
         self.familyname = familyname
-        self.phone = phone  # Здесь должен быть экземпляр Phone, а не класс
+        self.phone = phone
         self.email = email
         self.birthdate = birthdate
 
@@ -34,13 +34,13 @@ class Contact:
             'username': self.username,
             'givenname': self.givenname,
             'familyname': self.familyname,
-            'phone': self.phone.phone_to_dict() if self.phone else None,  # Сериализуем объект Phone
+            'phone': self.phone.phone_to_dict() if self.phone else None,
             'email': self.email,
-            'birthdate': self.birthdate.isoformat() if self.birthdate else None  # Сериализуем дату
+            'birthdate': self.birthdate.isoformat() if self.birthdate else None
         }
 
 class Group:
-    def __init__(self, id: int, title: str, description: str, contacts: int):
+    def __init__(self, id: int, title: str, description: str, contacts: list):
         self.id = id
         self.title = title
         self.description = description
@@ -53,41 +53,52 @@ class Group:
             'description': self.description,
             'contacts': self.contacts
         }
-
-@app.route('/api/v1/contact/', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def handle_contact():
-    phone = Phone(1, 7, 9, 9)  # Создаем экземпляр Phone
-    contact = Contact(1, 'test', 'test', 'test', phone, ['test@example.com'], date(2022, 1, 1))
     
-    if request.method == 'POST':
-        return jsonify(contact.contact_to_dict())
-    elif request.method == 'GET':
-        return jsonify(contact.contact_to_dict())
-    elif request.method == 'PUT':
-        contact = Contact(1, 'test', 'test', 'test', phone, ['updated@example.com'], date(2020, 6, 5))
-        return jsonify(contact.contact_to_dict())
-    elif request.method == 'DELETE':
-        return jsonify({
-            "message": "Контакт был удален",
-            "contact": contact.contact_to_dict()
-        })
 
-@app.route('/api/v1/group/', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def handle_group():
-    group = Group(1, 'test', 'test', 1)
-    
-    if request.method == 'POST':
-        return jsonify(group.group_to_dict())
-    elif request.method == 'GET':
-        return jsonify(group.group_to_dict())
-    elif request.method == 'PUT':
-        group = Group(1, 'test', 'updated description', 2)
-        return jsonify(group.group_to_dict())
-    elif request.method == 'DELETE':
-        return jsonify({
-            "message": "Группа была удалена",
-            "group": group.group_to_dict()
-        })
+#   _______________________________________________________________________________
+#   \__________________________________Contacts__________________________________/
+@app.route('/api/v1/contact/', methods=['GET'])
+def read_contact():
+    contact = Contact(1, "test", "test", "test", Phone(1, 7, 9, 9), "test", date(2022, 1, 1))
+    return jsonify(contact.contact_to_dict())
+
+@app.route('/api/v1/contact/', methods=['POST'])
+def create_contact():
+    contact = Contact(1, "test", "test", "test", Phone(1, 7, 9, 9),"test", date(2022, 1, 1))
+    return jsonify(contact.contact_to_dict())
+
+@app.route('/api/v1/contact/<int:contact_id>', methods=['DELETE'])
+def delete_contact(contact_id):
+    contact = Contact(1, "deleted_test", "deleted_test", "deleted_test", Phone(0, 0, 0, 0), "deleted_test", date(1, 1, 1))
+    return jsonify(contact.contact_to_dict())
+
+@app.route('/api/v1/contact/<int:contact_id>', methods=['PUT'])
+def update_contact(contact_id):
+    contact = Contact(1, "test1", "test1", "test1", Phone(1, 8, 937, 3646337), "test1", date(2023, 6, 20))
+    return jsonify(contact.contact_to_dict())
+
+
+#   _____________________________________________________________________________
+#   \__________________________________Groups__________________________________/
+@app.route('/api/v1/group/', methods=['GET'])
+def read_group():
+    group = Group(1, "Test", "Test", [0, 1])
+    return jsonify(group.group_to_dict())
+
+@app.route('/api/v1/group/', methods=['POST'])
+def create_group():
+    group = Group(1, "Test", "Test", [0, 1])
+    return jsonify(group.group_to_dict())
+
+@app.route('/api/v1/group/<int:group_id>', methods=['DELETE'])
+def delete_group(group_id):
+    group = Group(1, "Deleted_Test", "Deleted_Test", [None, None])
+    return jsonify(group.group_to_dict())
+
+@app.route('/api/v1/group/<int:group_id>', methods=['PUT'])
+def update_group(group_id):
+    group = Group(1, "Test1", "Test1", [1, 2])
+    return jsonify(group.group_to_dict())
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=6080)
